@@ -11,6 +11,7 @@
     "import/extensions": ["error", { "mjs": "always" }],
     "import/prefer-default-export": "off",
     "prettier/prettier": ["error"],
+    "camelcase": ["error", { "ignoreDestructuring": "true" }],
     "jest/no-disabled-tests": "warn",
     "jest/no-focused-tests": "error",
     "jest/prefer-to-have-length": "warn",

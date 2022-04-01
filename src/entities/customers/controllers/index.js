@@ -31,7 +31,7 @@ export const createCustomer = async ({ firstName, lastName, email, phoneNo, isEm
 
   const customer = await storeCustomerDetails({ firstName, lastName, email, isEmployee, isAffiliate, phoneNo });
 
-  return { success: true, code: 200, message: 'Customer created successfully', data: customer };
+  return { success: true, code: 201, message: 'Customer created successfully', data: customer };
 };
 
 export const findAllCustomers = async (filter) => {
