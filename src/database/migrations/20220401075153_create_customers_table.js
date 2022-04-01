@@ -6,6 +6,7 @@ export const up = async (knex) => {
     table.string('first_name').notNullable();
     table.string('last_name').notNullable();
     table.string('email').notNullable();
+    table.string('phone_no').notNullable();
     table.boolean('is_employee').notNullable().defaultTo(false);
     table.boolean('is_affiliate').notNullable().defaultTo(false);
     table.timestamps(true, true);
