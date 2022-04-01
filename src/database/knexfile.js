@@ -4,7 +4,7 @@
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 
-export const testing = {
+export const test = {
   client: 'postgresql',
   connection: {
     database: 'my_db',
@@ -56,4 +56,4 @@ export const production = {
   },
 };
 
-export default { testing, development, production };
+export default { test, development, production };

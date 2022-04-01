@@ -5,7 +5,8 @@ export const up = async (knex) => {
     table.increments('id').unique().primary().notNullable();
     table.string('first_name').notNullable();
     table.string('last_name').notNullable();
-    table.string('email').notNullable();
+    table.string('email').notNullable().unique();
+    table.string('phone_no').notNullable().unique();
     table.boolean('is_employee').notNullable().defaultTo(false);
     table.boolean('is_affiliate').notNullable().defaultTo(false);
     table.timestamps(true, true);
