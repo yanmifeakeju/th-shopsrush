@@ -4,7 +4,7 @@
  * @type { Object.<string, import("knex").Knex.Config> }
  */
 
-export const development = {
+export const testing = {
   client: 'postgresql',
   connection: {
     database: 'my_db',
@@ -17,6 +17,26 @@ export const development = {
   },
   migrations: {
     tableName: 'knex_migrations',
+  },
+};
+
+export const development = {
+  client: 'postgresql',
+  connection: {
+    database: process.env.DB_NAME,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+  },
+  pool: {
+    min: 2,
+    max: 10,
+  },
+  migrations: {
+    tableName: 'knex_migrations',
+    directory: './migrations',
+  },
+  seeds: {
+    directory: './seeds',
   },
 };
 
@@ -36,4 +56,4 @@ export const production = {
   },
 };
 
-export default { development, production };
+export default { testing, development, production };

@@ -1,13 +1,14 @@
 {
   "name": "th-shopsrush",
   "version": "1.0.0",
-  "main": "index.mjs",
+  "main": "dist/server.js",
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "start": "dotenv node index.mjs",
-    "start:dev": "dotenv nodemon index.mjs",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "start": "yarn build && dotenv node dist/server.js",
+    "start:dev": "dotenv nodemon -- --exec babel-node src/server.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "build": "rm -rf dist && babel src -d dist --copy-files --extensions .js,.json"
   },
   "devDependencies": {
     "eslint": "^8.12.0",
