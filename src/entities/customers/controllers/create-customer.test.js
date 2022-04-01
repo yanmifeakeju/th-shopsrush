@@ -1,7 +1,7 @@
 import { mocked } from 'jest-mock';
 import { findExistingCustomerOnSignup, storeCustomerDetails } from '../../../database/repositories/customers';
 import { generateCustomerRequest } from '../../../utils/test-utils/generate';
-import { createCustomer } from './create-customer';
+import { createCustomer } from '.';
 
 jest.mock('../../../database/repositories/customers');
 
@@ -54,7 +54,7 @@ describe('Create Customer', () => {
 
     expect(storeCustomerDetails).toHaveBeenCalled();
     expect(response.success).toBe(true);
-    expect(response.code).toBe(200);
+    expect(response.code).toBe(201);
     expect(response.message).toBe('Customer created successfully');
     expect(response.data).toEqual(data);
   });
