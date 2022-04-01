@@ -1,5 +1,5 @@
 import { mocked } from 'jest-mock';
-import { findExistinCustomerOnSignup, storeCustomerDetails } from '../../../database/repositories/customers';
+import { findExistingCustomerOnSignup, storeCustomerDetails } from '../../../database/repositories/customers';
 import { generateCustomerRequest } from '../../../utils/test-utils/generate';
 import { createCustomer } from './create-customer';
 
@@ -25,7 +25,7 @@ describe('Create Customer', () => {
   });
 
   it('should return an error if email is already registered', async () => {
-    mocked(findExistinCustomerOnSignup).mockResolvedValueOnce({ email: data.email });
+    mocked(findExistingCustomerOnSignup).mockResolvedValueOnce({ email: data.email });
     mocked(storeCustomerDetails).mockResolvedValueOnce(data);
 
     const response = await createCustomer({ ...data });
@@ -36,7 +36,7 @@ describe('Create Customer', () => {
   });
 
   it('should return an error if phone number is already registered', async () => {
-    mocked(findExistinCustomerOnSignup).mockResolvedValueOnce({ phoneNo: data.phoneNo });
+    mocked(findExistingCustomerOnSignup).mockResolvedValueOnce({ phoneNo: data.phoneNo });
     mocked(storeCustomerDetails).mockResolvedValueOnce(data);
 
     const response = await createCustomer({ ...data });
@@ -47,7 +47,7 @@ describe('Create Customer', () => {
   });
 
   it('should return successful response if customer is created successfully', async () => {
-    mocked(findExistinCustomerOnSignup).mockResolvedValueOnce(null);
+    mocked(findExistingCustomerOnSignup).mockResolvedValueOnce(null);
     mocked(storeCustomerDetails).mockResolvedValueOnce(data);
 
     const response = await createCustomer(data);
