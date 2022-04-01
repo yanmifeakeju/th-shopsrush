@@ -8,6 +8,6 @@
   "plugins": ["prettier"],
   "rules": {
     "import/extensions": ["error", { "mjs": "always" }],
-    "prettier/prettier": [""]
+    "prettier/prettier": ["error"]
   }
 }
