@@ -2,7 +2,6 @@
   "name": "th-shopsrush",
   "version": "1.0.0",
   "main": "dist/server.js",
-  "type": "module",
   "license": "MIT",
   "scripts": {
     "start": "yarn build && dotenv node dist/server.js",
