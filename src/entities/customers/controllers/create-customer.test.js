@@ -1,15 +1,16 @@
 import { mocked } from 'jest-mock';
-import { storeCustomerDetails } from '../../../database/repositories/customers';
+import { findExistinCustomerOnSignup, storeCustomerDetails } from '../../../database/repositories/customers';
 import { generateCustomerRequest } from '../../../utils/test-utils/generate';
 import { createCustomer } from './create-customer';
 
 jest.mock('../../../database/repositories/customers');
 
 describe('Create Customer', () => {
+  beforeEach(() => jest.restoreAllMocks());
+  const data = generateCustomerRequest();
+
   describe('Validation: Required Fields', () => {
     const requiredFields = ['firstName', 'lastName', 'email', 'phoneNo'];
-    const data = generateCustomerRequest();
-
     requiredFields.forEach((field) => {
       const incompleteData = { ...data, [field]: undefined };
 
@@ -23,13 +24,35 @@ describe('Create Customer', () => {
     });
   });
 
-  it('should return success response if customer is created successfully', async () => {
-    const data = generateCustomerRequest();
-    mocked(storeCustomerDetails).mockResolvedValue({ ...data });
+  it('should return an error if email is already registered', async () => {
+    mocked(findExistinCustomerOnSignup).mockResolvedValueOnce({ email: data.email });
+    mocked(storeCustomerDetails).mockResolvedValueOnce(data);
+
+    const response = await createCustomer({ ...data });
+
+    expect(response.success).toBe(false);
+    expect(response.code).toBe(400);
+    expect(response.error).toBe('Email already registered');
+  });
+
+  it('should return an error if phone number is already registered', async () => {
+    mocked(findExistinCustomerOnSignup).mockResolvedValueOnce({ phoneNo: data.phoneNo });
+    mocked(storeCustomerDetails).mockResolvedValueOnce(data);
+
+    const response = await createCustomer({ ...data });
+
+    expect(response.success).toBe(false);
+    expect(response.code).toBe(400);
+    expect(response.error).toBe('Phone number already registered');
+  });
+
+  it('should return successful response if customer is created successfully', async () => {
+    mocked(findExistinCustomerOnSignup).mockResolvedValueOnce(null);
+    mocked(storeCustomerDetails).mockResolvedValueOnce(data);
 
     const response = await createCustomer(data);
 
-    expect(storeCustomerDetails).toHaveBeenCalledWith(data);
+    expect(storeCustomerDetails).toHaveBeenCalled();
     expect(response.success).toBe(true);
     expect(response.code).toBe(200);
     expect(response.message).toBe('Customer created successfully');

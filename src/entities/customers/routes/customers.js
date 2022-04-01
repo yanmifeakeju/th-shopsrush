@@ -11,6 +11,7 @@ export const createNewCustomer = async (req, res) => {
       data: response.data || undefined,
     });
   } catch (error) {
+    console.log(error);
     logger.error('Error creating a new customer', error);
     return res.status(500).json({ success: false, message: 'Error creating a new customer' });
   }

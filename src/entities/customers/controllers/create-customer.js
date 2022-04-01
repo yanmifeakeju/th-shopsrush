@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { storeCustomerDetails } from '../../../database/repositories/customers';
+import { findExistinCustomerOnSignup, storeCustomerDetails } from '../../../database/repositories/customers';
 
 export const createCustomer = async ({ firstName, lastName, email, phoneNo, isEmployee = false, isAffiliate = false }) => {
   const schema = Joi.object().keys({
@@ -16,6 +16,12 @@ export const createCustomer = async ({ firstName, lastName, email, phoneNo, isEm
 
   const validation = schema.validate({ firstName, lastName, email, phoneNo, isEmployee, isAffiliate });
   if (validation.error) return { success: false, code: 400, error: validation.error.message };
+
+  const isExistingCustomer = await findExistinCustomerOnSignup(email, phoneNo);
+
+  if (isExistingCustomer && isExistingCustomer.email === email) return { success: false, code: 400, error: 'Email already registered' };
+
+  if (isExistingCustomer && isExistingCustomer.phoneNo === phoneNo) return { success: false, code: 400, error: 'Phone number already registered' };
 
   const customer = await storeCustomerDetails({ firstName, lastName, email, isEmployee, isAffiliate, phoneNo });
 
