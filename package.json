@@ -6,7 +6,7 @@
   "scripts": {
     "start": "yarn build && dotenv node dist/server.js",
     "start:dev": "dotenv nodemon -- --exec babel-node src/server.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "dotenv jest",
     "build": "rm -rf dist && babel src -d dist --copy-files --extensions .js,.json"
   },
   "devDependencies": {
