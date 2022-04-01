@@ -10,7 +10,7 @@ export const up = async (knex) => {
     table.string('description').notNullable();
     table.decimal('rate', 2).notNullable();
     table.string('name').notNullable().unique();
-    table.string('discount_level').notNullable().unique();
+    table.enum('type', ['customer', 'employees', 'affiliate', 'general']).notNullable().unique();
     table.timestamps(true, true);
   });
 

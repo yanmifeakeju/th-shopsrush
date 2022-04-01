@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { createNewDiscount } from './discount';
+import { createNewDiscount, getDiscount, getDiscounts } from './discount';
 
 const router = Router();
 
 router.post('/', createNewDiscount);
-router.get('/', (req, res) => res.status(200).send({ hello: 'You are on ShopsRUs API' }));
+router.get('/', getDiscounts);
+router.get('/:type', getDiscount);
 
 export default router;
