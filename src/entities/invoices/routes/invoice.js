@@ -4,6 +4,7 @@ import { createInvoice } from '../controllers';
 export const createNewInvoice = async (req, res) => {
   try {
     const response = await createInvoice(req.params.customerId, req.body);
+
     return res.status(response.code).json({
       success: response.success,
       message: response.message,

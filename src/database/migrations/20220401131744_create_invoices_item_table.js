@@ -8,10 +8,10 @@ export const up = async (knex) => {
   await knex.schema.createTable(tableName, (table) => {
     table.increments('id').unique().primary().notNullable();
     table.integer('invoice_id').notNullable();
-    table.string('item').notNullable();
+    table.string('name').notNullable();
     table.integer('quantity').notNullable();
-    table.decimal('price', 2).notNullable();
-    table.enum('categories', ['groceries', 'electronics', 'furniture']).notNullable();
+    table.decimal('price', 12, 4).notNullable();
+    table.enum('category', ['groceries', 'electronics', 'furniture']).notNullable();
     table.timestamps(true, true);
 
     table.foreign('invoice_id').references('invoices.id');

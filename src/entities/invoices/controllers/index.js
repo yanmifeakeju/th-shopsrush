@@ -1,8 +1,11 @@
 import Joi from 'joi';
+import { findCustomerBy } from '../../../database/repositories/customers';
+import { processInvoice } from '../helpers/invoicing';
 
-export const createInvoice = async (customerId, { items = [] }) => {
+export const createInvoice = async (customerId, { discountId, items = [] }) => {
   const schema = Joi.object().keys({
     customerId: Joi.number().required(),
+    discountId: Joi.number(),
     items: Joi.array()
       .items(
         Joi.object().keys({
@@ -15,8 +18,11 @@ export const createInvoice = async (customerId, { items = [] }) => {
       .required(),
   });
 
-  const validation = schema.validate({ customerId, items });
+  const validation = schema.validate({ customerId, discountId, items });
   if (validation.error) return { success: false, code: 400, error: validation.error.message };
 
-  return { success: true, code: 201, message: 'Invoice created successfully', data: { items } };
+  const customer = await findCustomerBy({ id: customerId });
+  if (!customer) return { success: false, code: 404, error: 'Customer not found' };
+
+  return processInvoice(customer, items, discountId);
 };
