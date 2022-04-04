@@ -7,6 +7,7 @@ const tableName = 'invoices';
 export const up = async (knex) => {
   await knex.schema.createTable(tableName, (table) => {
     table.increments('id').unique().primary().notNullable();
+    table.string('bill_no').notNullable().unique();
     table.integer('customer_id').notNullable();
     table.integer('discount_id');
     table.enum('status', ['pending', 'paid']).notNullable().defaultTo('pending');

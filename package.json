@@ -7,7 +7,10 @@
     "start": "yarn build && dotenv node dist/server.js",
     "start:dev": "dotenv nodemon -- --exec babel-node src/server.js",
     "test": "dotenv jest  --detectOpenHandles",
-    "build": "rm -rf dist && babel src -d dist --copy-files --extensions .js,.json"
+    "build": "rm -rf dist && babel src -d dist --copy-files --extensions .js,.json",
+    "migrate:up": "dotenv knex migrate:latest -- --knexfile src/database/knexfile.js --esm",
+    "migrate:down": "dotenv knex migrate:rollback -- --knexfile src/database/knexfile.js --esm",
+    "seed": "dotenv knex seed:run -- --knexfile src/database/knexfile.js --esm"
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
@@ -33,6 +36,7 @@
     "knex": "^1.0.4",
     "knex-stringcase": "^1.4.6",
     "pg": "^8.7.3",
+    "randomstring": "^1.2.2",
     "winston": "^3.6.0"
   }
 }

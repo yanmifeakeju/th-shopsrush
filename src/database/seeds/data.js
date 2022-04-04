@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { faker } from '@faker-js/faker';
-import { generateCustomerRequest } from '../../utils/test-utils/generate';
+import randomstring from 'randomstring';
+import { generateArrayofItems, generateCustomerRequest } from '../../utils/test-utils/generate';
 
 /**
  * @param { import("knex").Knex } knex
@@ -8,12 +9,16 @@ import { generateCustomerRequest } from '../../utils/test-utils/generate';
  */
 export async function seed(knex) {
   // Deletes ALL existing entries
+  await knex('invoice_items').del();
+  await knex('invoices').del();
   await knex('customers').del();
   await knex('discounts').del();
 
   // Inserts seed entries
-  const results = [];
-  const discountResults = [];
+  let customers = [];
+  let discounts = [];
+  let invoices = [];
+  let invoiceItems = [];
 
   for (let i = 0; i < 10; i += 1) {
     const {
@@ -25,11 +30,11 @@ export async function seed(knex) {
       isAffiliate: is_affiliate,
     } = generateCustomerRequest();
 
-    results.push(knex('customers').insert({ first_name, last_name, email, phone_no, is_employee, is_affiliate }));
+    customers.push(knex('customers').insert({ first_name, last_name, email, phone_no, is_employee, is_affiliate }).returning('*'));
   }
-  await Promise.all(results);
+  customers = (await Promise.all(customers)).flat();
 
-  const discounts = {
+  const discountData = {
     affiliate: {
       rate: 10 / 100,
       type: 'affiliate',
@@ -57,9 +62,32 @@ export async function seed(knex) {
     },
   };
 
-  Object.keys(discounts).forEach((key) => {
-    discountResults.push(knex('discounts').insert(discounts[key]));
+  Object.keys(discountData).forEach((key) => {
+    discounts.push(knex('discounts').insert(discountData[key]).returning('*'));
   });
 
-  await Promise.all(discountResults);
+  discounts = (await Promise.all(discounts)).flat();
+  const numberofTestInvoices = 200;
+
+  for (let i = 0; i < numberofTestInvoices; i += 1) {
+    invoices.push(
+      knex('invoices')
+        .insert({
+          bill_no: randomstring.generate({ length: 10, charset: 'alphanumeric' }),
+          customer_id: faker.random.arrayElement(customers).id,
+          discount_id: i % 2 === 0 ? faker.random.arrayElement(discounts).id : null,
+        })
+        .returning('*')
+    );
+  }
+
+  invoices = (await Promise.all(invoices)).flat();
+
+  for (let i = 0; i < numberofTestInvoices; i += 1) {
+    const invoiceItemsData = generateArrayofItems(20);
+    const invoiceItemsWithInvoiceId = invoiceItemsData.map((item) => ({ ...item, invoice_id: invoices[i].id }));
+    invoiceItems.push(knex('invoice_items').insert(invoiceItemsWithInvoiceId).returning('*'));
+  }
+
+  invoiceItems = (await Promise.all(invoiceItems)).flat();
 }

@@ -1,6 +1,8 @@
 import Joi from 'joi';
 import { findCustomerBy } from '../../../database/repositories/customers';
-import { processInvoice } from '../helpers/invoicing';
+import { retrieveInvoiceItemsWithInvoiceId } from '../../../database/repositories/invoice-items';
+import { getInoviceDataFromBillNo } from '../../../database/repositories/invoices';
+import { calculateInvoiceData, processInvoice } from '../helpers/invoicing';
 
 export const createInvoice = async ({ customerId, discountId, items }) => {
   const schema = Joi.object().keys({
@@ -26,4 +28,32 @@ export const createInvoice = async ({ customerId, discountId, items }) => {
   if (!customer) return { success: false, code: 404, error: 'Customer not found' };
 
   return processInvoice(customer, items, discountId);
+};
+
+export const getInvoiceFromBillNo = async ({ billNo }) => {
+  const schema = Joi.object().keys({
+    billNo: Joi.string().required().length(10),
+  });
+
+  const vailidation = schema.validate({ billNo });
+  if (vailidation.error) return { success: false, code: 400, error: vailidation.error.message };
+
+  const invoice = await getInoviceDataFromBillNo(billNo);
+  if (!invoice) return { success: false, code: 404, error: 'Invoice not found' };
+
+  const invoiceItem = await retrieveInvoiceItemsWithInvoiceId(invoice.id);
+  const calculateInvoice = await calculateInvoiceData(invoiceItem, invoice.discountId);
+  const customer = await findCustomerBy({ id: invoice.customerId });
+
+  return {
+    success: true,
+    code: 201,
+    message: 'Invoice created successfully',
+    data: {
+      customer,
+      invoice: { ...invoice, ...calculateInvoice.invoice },
+      discountedItems: calculateInvoice.discountableItems,
+      items: invoiceItem,
+    },
+  };
 };

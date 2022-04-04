@@ -6,37 +6,37 @@ async function eligibleForDiscount(customer, discountId) {
   if (!getDiscount) return { eligible: false, message: 'Discount not found' };
 
   if (getDiscount.type === 'affiliate') {
-    return eligibleForAffiliateDiscount(customer, getDiscount);
+    return eligibleForAffiliateDiscount(customer);
   }
 
   if (getDiscount.type === 'employees') {
-    return eligibleForEmployeeDiscount(customer, getDiscount);
+    return eligibleForEmployeeDiscount(customer);
   }
 
   if (getDiscount.type === 'customer') {
-    return eligibleForCustomerDiscount(customer, getDiscount);
+    return eligibleForCustomerDiscount(customer);
   }
 
   if (getDiscount.type === 'general') {
-    return { eligible: true, rate: getDiscount.rate, type: getDiscount.type };
+    return { eligible: true };
   }
 
   return { eligible: false, message: 'Discount type not found' };
 }
 
-async function eligibleForAffiliateDiscount(customer, discount) {
+async function eligibleForAffiliateDiscount(customer) {
   if (!customer.isAffiliate) return { eligible: false, message: 'Customer is not eligible for affiliate discount' };
 
-  return { eligible: true, rate: discount.rate, type: discount.type };
+  return { eligible: true };
 }
 
-async function eligibleForEmployeeDiscount(customer, discount) {
+async function eligibleForEmployeeDiscount(customer) {
   if (!customer.isEmployee) return { eligible: false, message: 'Customer is not eligible for employee discount' };
 
-  return { eligible: true, rate: discount.rate, type: discount.type };
+  return { eligible: true };
 }
 
-async function eligibleForCustomerDiscount(customer, discount) {
+async function eligibleForCustomerDiscount(customer) {
   const now = new Date(Date.now());
   const then = new Date(customer.createdAt);
 
@@ -45,7 +45,7 @@ async function eligibleForCustomerDiscount(customer, discount) {
 
   if (diffInYears < 2) return { eligible: false, message: 'Customer is not eligible for customer discount' };
 
-  return { eligible: true, rate: discount.rate, type: discount.type };
+  return { eligible: true };
 }
 
 export default eligibleForDiscount;

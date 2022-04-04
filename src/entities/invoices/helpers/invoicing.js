@@ -1,24 +1,26 @@
 // eslint-disable-next-line import/named
+import { findDiscount } from '../../../database/repositories/discount';
 import { storeInvoiceDetails } from '../../../database/repositories/invoices';
 import processDiscount from './discount';
 import eligibleForDiscount from './eligibility';
 
 export const processInvoice = async (customer, items, discountId) => {
-  console.log('here');
-  const gross = items.reduce((acc, item) => acc + item.quantity * item.price, 0);
-  let discountableItems = [];
-  let discount = 0;
-
   if (discountId) {
     const isEligibleForSelectedDiscount = await eligibleForDiscount(customer, discountId);
     if (!isEligibleForSelectedDiscount.eligible) return { success: false, code: 400, error: isEligibleForSelectedDiscount.message };
-
-    discountableItems = items.map((item) => (item.category !== 'groceries' ? item : null)).filter((item) => item);
-
-    discount = getInvoiceDiscount(discountableItems, isEligibleForSelectedDiscount.rate, isEligibleForSelectedDiscount.type);
   }
 
-  const { invoice, invoiceItems } = await storeInvoiceDetails({ customerId: customer.id, discountId, gross, discount }, items);
+  const { invoice, discount, invoiceItems } = await storeInvoiceDetails({ customerId: customer.id, discountId, items });
+
+  const gross = invoiceItems.reduce((acc, item) => acc + Number(item.quantity) * Number(item.price), 0);
+  let discountableItems = [];
+  let discounted = 0;
+
+  if (discount) {
+    discountableItems = invoiceItems.map((item) => (item.category !== 'groceries' ? item : null)).filter((item) => item);
+
+    discounted = getInvoiceDiscount(discountableItems, discount.rate, discount.type);
+  }
 
   return {
     success: true,
@@ -27,12 +29,24 @@ export const processInvoice = async (customer, items, discountId) => {
     data: {
       customer,
       discountableItems,
-      data: {
-        invoice: { ...invoice, total: invoice.gross - invoice.discount },
-        invoiceItems,
-      },
+      invoice: { ...invoice, gross, discounted, total: gross - discounted },
+      invoiceItems,
     },
   };
+};
+
+export const calculateInvoiceData = async (items, discountId) => {
+  const gross = items.reduce((acc, item) => acc + Number(item.quantity) * Number(item.price), 0);
+  const discount = await findDiscount({ id: discountId });
+  let discountableItems = [];
+  let discounted = 0;
+
+  if (discount) {
+    discountableItems = items.map((item) => (item.category !== 'groceries' ? item : null)).filter((item) => item);
+    discounted = getInvoiceDiscount(discountableItems, discount.rate, discount.type);
+  }
+
+  return { discountableItems, invoice: { gross, discounted, total: gross - discounted } };
 };
 
 // Maybe a better abstraction, but for now, this helps me to understand the process
