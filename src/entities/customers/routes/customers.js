@@ -1,5 +1,5 @@
 import logger from '../../../utils/logger';
-import { createCustomer, findAllCustomers, findCustomer } from '../controllers/create-customer';
+import { createCustomer, findAllCustomers, findCustomer } from '../controllers';
 
 export const createNewCustomer = async (req, res) => {
   try {

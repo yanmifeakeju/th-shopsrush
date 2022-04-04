@@ -9,6 +9,8 @@
   "plugins": ["prettier", "jest"],
   "rules": {
     "import/extensions": ["error", { "mjs": "always" }],
+    "camelcase": ["error", { "ignoreDestructuring": true, "properties": "never" }],
+    "no-use-before-define": ["error", { "functions": false, "classes": true, "variables": true }],
     "import/prefer-default-export": "off",
     "prettier/prettier": ["error"],
     "jest/no-disabled-tests": "warn",
