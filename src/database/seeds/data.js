@@ -1,5 +1,6 @@
-import { generateCustomerRequest } from '../../utils/test-utils/generate';
+/* eslint-disable camelcase */
 import { faker } from '@faker-js/faker';
+import { generateCustomerRequest } from '../../utils/test-utils/generate';
 
 /**
  * @param { import("knex").Knex } knex

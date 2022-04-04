@@ -1,4 +1,3 @@
-import { allDiscounts } from '../../../database/repositories/discount';
 import logger from '../../../utils/logger';
 import { createDiscount, getAllDiscounts, retrieveDiscount } from '../controllers';
 
@@ -28,7 +27,7 @@ export const getDiscounts = async (req, res) => {
     });
   } catch (error) {
     logger.error('Error getting discounts', error);
-    res.status(500).json({ success: false, message: 'Error getting discounts' });
+    return res.status(500).json({ success: false, message: 'Error getting discounts' });
   }
 };
 
