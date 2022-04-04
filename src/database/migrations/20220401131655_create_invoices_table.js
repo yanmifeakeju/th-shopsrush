@@ -9,8 +9,6 @@ export const up = async (knex) => {
     table.increments('id').unique().primary().notNullable();
     table.integer('customer_id').notNullable();
     table.integer('discount_id');
-    table.decimal('gross', 12, 4).notNullable();
-    table.decimal('discount', 12, 4).defaultTo(0);
     table.enum('status', ['pending', 'paid']).notNullable().defaultTo('pending');
     table.timestamps(true, true);
 

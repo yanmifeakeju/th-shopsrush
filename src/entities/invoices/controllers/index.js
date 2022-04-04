@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { findCustomerBy } from '../../../database/repositories/customers';
 import { processInvoice } from '../helpers/invoicing';
 
-export const createInvoice = async (customerId, { discountId, items = [] }) => {
+export const createInvoice = async ({ customerId, discountId, items }) => {
   const schema = Joi.object().keys({
     customerId: Joi.number().required(),
     discountId: Joi.number(),
@@ -15,7 +15,8 @@ export const createInvoice = async (customerId, { discountId, items = [] }) => {
           category: Joi.string().valid('groceries', 'electronics', 'furniture').required(),
         })
       )
-      .required(),
+      .required()
+      .min(1),
   });
 
   const validation = schema.validate({ customerId, discountId, items });

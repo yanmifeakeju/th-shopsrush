@@ -4,6 +4,7 @@ import processDiscount from './discount';
 import eligibleForDiscount from './eligibility';
 
 export const processInvoice = async (customer, items, discountId) => {
+  console.log('here');
   const gross = items.reduce((acc, item) => acc + item.quantity * item.price, 0);
   let discountableItems = [];
   let discount = 0;
